@@ -1,16 +1,17 @@
-from pyspark.sql import SparkSession
-from pyspark.sql import Row
+from pyspark.sql import SparkSession, Row
 
-# Initialize Spark session with HBase configs
+# Initialize Spark session
 spark = SparkSession.builder \
     .appName("SparkHBaseWrite") \
     .getOrCreate()
 
 # Example data
-data = [Row(key="1", name="Alice"), Row(key="2", name="Bob")]
+data = [Row(key="1", name="Alice"),
+        Row(key="2", name="Bob"),
+        Row(key="3", name="Charlie")]
 df = spark.createDataFrame(data)
 
-# Convert to RDD of key-value pairs for HBase
+# Convert to HBase key-value format
 def to_hbase(row):
     return (row.key, {"info:name": row.name})
 
@@ -28,3 +29,4 @@ rdd.saveAsNewAPIHadoopDataset(
 )
 
 spark.stop()
+
